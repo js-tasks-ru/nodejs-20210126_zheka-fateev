@@ -19,19 +19,17 @@ server.on('request', (req, res) => {
 
   switch (req.method) {
     case 'GET':
-      fs.access(filepath, fs.F_OK, (err) => {
-        if (err) {
+      const stream = fs.createReadStream(filepath);
+      stream.pipe(res);
+      stream.on('error', (err) => {
+        if (err.code === 'ENOENT') {
           res.statusCode = 404;
           res.end(`Cannot find file ${pathname}`);
           return;
         }
 
-        const stream = fs.createReadStream(filepath);
-        stream.pipe(res);
-        stream.on('error', (err) => {
-          res.statusCode = 500;
-          res.end('Unknown error: ' + err.message);
-        });
+        res.statusCode = 500;
+        res.end('Unknown error: ' + err.message);
       });
       break;
 
