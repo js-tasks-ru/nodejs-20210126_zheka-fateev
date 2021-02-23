@@ -13,7 +13,7 @@ const emitter = new EventEmitter();
 
 router.get('/subscribe', async (ctx, next) => {
   ctx.body = await new Promise((resolve, reject) => {
-    emitter.on('message', (message) => {
+    emitter.once('message', (message) => {
       resolve(message);
     });
   });
